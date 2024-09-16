@@ -1,28 +1,44 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header />
+    <div class="container-fluid">
+      <div class="row">
+        <SideNav class="col-md-3" />
+        <main class="col-md-9">
+          <router-view></router-view>
+        </main>
+      </div>
+    </div>
+    <Footer />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from './components/Header.vue'
+import SideNav from './components/SideNav.vue'
+import Footer from './components/Footer.vue'
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+    Header,
+    SideNav,
+    Footer
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
+
+main {
+  padding: 20px;
+}
+</style>
+
+<style>
+@import './../node_modules/@vueform/vueform/dist/vueform.css';
 </style>
