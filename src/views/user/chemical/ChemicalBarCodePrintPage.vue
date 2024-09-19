@@ -43,7 +43,7 @@
 <script>
 // import { TextElement } from '@vueform/vueform';
 // import { data } from 'autoprefixer';
-import ChemicalSelectBox from '../../components/chemical/ChemicalSelectBox.vue'
+import ChemicalSelectBox from '@/components/chemical/ChemicalSelectBox.vue'
 
 export default {
     components: {

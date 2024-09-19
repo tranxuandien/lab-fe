@@ -24,9 +24,10 @@
     </div>
 </template>
 <script>
-import api from '@/plugin/axios';
-import { toast } from 'vue3-toastify';
+// import api from '@/plugin/axios';
+// import { toast } from 'vue3-toastify';
 import ChemicalSelectBox from '@/components/chemical/ChemicalSelectBox.vue'
+import { axiosWrapper } from '@/plugin/axiosWrapper';
 
 export default {
     components: {
@@ -55,54 +56,57 @@ export default {
     },
     methods: {
         async getAllBrand() {
-            api.get("brand").then((res) => {
-                this.brandList = res.data;
-            }).catch(e => {
-                console.log(e)
-            })
+            this.brandList = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/brand');
+            // api.get("brand").then((res) => {
+            //     this.brandList = res.data;
+            // }).catch(e => {
+            //     console.log(e)
+            // })
         }
         ,
         async getAllPosition() {
-            api.get("position").then((res) => {
-                this.positionLst = res.data;
-            }).catch((e) => {
-                console.log(e)
-            })
+            this.positionLst = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/position');
+            // api.get("position").then((res) => {
+            //     this.positionLst = res.data;
+            // }).catch((e) => {
+            //     console.log(e)
+            // })
         },
         async doSearch(form$) {
             const data = form$.data
-            form$.submitting = true
-            form$.cancelToken = form$.$vueform.services.axios.CancelToken.source()
-            let response
-            const url = form$.$vueform.services.axios.defaults.baseURL + 'chemical/list';
-            try {
-                // if (data.chemicalClass != 'Hóa chất vi sinh') {
-                //     data.chemicalClassInfo = data.chemicalClassInfo1;
-                // }
-                console.log(data)
-                response = await form$.$vueform.services.axios.post(url,
-                    data /* | data | requestData */,
-                    {
-                        cancelToken: form$.cancelToken.token,
-                    }
-                ).then(res => {
-                    console.log(res)
-                    if (!res.data.errorMessage) {
-                        this.$emit('getData',res.data.data);
-                    }
-                    else {
-                        toast.error(res.data.errorMessage, {
-                            position: toast.POSITION.TOP_CENTER,
-                        });
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-            } finally {
-                form$.submitting = false
-            }
-            console.log('success', response)
+            // form$.submitting = true
+            // const url = form$.$vueform.services.axios.defaults.baseURL + 'chemical/list';
+            const result = await axiosWrapper.post(process.env.VUE_APP_BASE_URL + 'api/v1/chemical/list', data)
+            this.$emit('getData', result.data);
         }
+        //     try {
+        //         // if (data.chemicalClass != 'Hóa chất vi sinh') {
+        //         //     data.chemicalClassInfo = data.chemicalClassInfo1;
+        //         // }
+        //         console.log(data)
+        //         response = await form$.$vueform.services.axios.post(url,
+        //             data /* | data | requestData */,
+        //             {
+        //                 cancelToken: form$.cancelToken.token,
+        //             }
+        //         ).then(res => {
+        //             console.log(res)
+        //             if (!res.data.errorMessage) {
+        //                 this.$emit('getData',res.data.data);
+        //             }
+        //             else {
+        //                 toast.error(res.data.errorMessage, {
+        //                     position: toast.POSITION.TOP_CENTER,
+        //                 });
+        //             }
+        //         })
+        //     } catch (error) {
+        //         console.log(error)
+        //     } finally {
+        //         form$.submitting = false
+        //     }
+        //     console.log('success', response)
+        // }
     },
     mounted() {
         this.getAllBrand()

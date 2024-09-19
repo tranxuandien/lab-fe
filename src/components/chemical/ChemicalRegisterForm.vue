@@ -1,5 +1,6 @@
 <template>
     <Vueform :endpoint="false" @submit="submitForm" name="registerForm">
+        {{ errorMessage }}
         <GroupElement name="chemicalInformation" label="Thông tin cơ bản">
             <TextElement name="name" rules="required" :messages="{ required: 'Nhập tên hóa chất' }"
                 placeholder="Tên hóa chất" :columns="6" />
@@ -65,8 +66,8 @@
     </Vueform>
 </template>
 <script>
-import api from '@/plugin/axios';
-import { toast } from 'vue3-toastify';
+import { axiosWrapper } from '@/plugin/axiosWrapper';
+// import { toast } from 'vue3-toastify';
 // import { Validator } from '@vueform/vueform'
 
 // const abc = class extends Validator {
@@ -103,57 +104,32 @@ export default {
     },
     methods: {
         async getAllBrand() {
-            api.get("brand").then((res) => {
-                this.brandList = res.data;
-            }).catch(e => {
-                console.log(e)
-            })
+            this.brandList = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/brand');
         }
         ,
         async getAllPosition() {
-            api.get("position").then((res) => {
-                this.positionLst = res.data;
-            }).catch((e) => {
-                console.log(e)
-            })
+            this.positionLst = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/position');
         },
         async submitForm(form$) {
             const data = form$.data
             form$.submitting = true
-            form$.cancelToken = form$.$vueform.services.axios.CancelToken.source()
-            let response
-            const url = form$.$vueform.services.axios.defaults.baseURL + 'chemical/add';
-            try {
-                if (data.chemicalClass != 'Hóa chất vi sinh') {
-                    data.chemicalClassInfo = data.chemicalClassInfo1;
-                }
-                response = await form$.$vueform.services.axios.post(url,
-                    data /* | data | requestData */,
-                    {
-                        cancelToken: form$.cancelToken.token,
-                    }
-                ).then(res => {
-                    if (!res.data.errorMessage) {
-                        toast.success("Hóa chất đã được đăng ký!", {
-                            position: toast.POSITION.TOP_CENTER,
-                        });
-                        //reset form
-                        form$.reset();
-                    }
-                    else {
-                        toast.error(res.data.errorMessage, {
-                            position: toast.POSITION.TOP_CENTER,
-                        });
-                    }
-                })
-            } catch (error) {
-                toast.error(error, {
-                    position: toast.POSITION.TOP_CENTER,
-                });
-            } finally {
-                form$.submitting = false
+            if (data.chemicalClass != 'Hóa chất vi sinh') {
+                data.chemicalClassInfo = data.chemicalClassInfo1;
             }
-            console.log('success', response)
+            try {
+                const check = await axiosWrapper.post(process.env.VUE_APP_BASE_URL + 'api/v1/chemical/add', data).finally(() => {
+                    console.log("======")
+                    form$.submitting = false;
+                });
+                console.log(check);
+            }
+            catch (error) {
+                console.log("error");
+                console.log(error);
+                this.errorMessage = error.data.errorMessage;
+            }
+
+
         }
     },
     mounted() {

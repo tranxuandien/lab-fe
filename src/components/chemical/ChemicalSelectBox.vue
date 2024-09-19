@@ -3,7 +3,7 @@
             :native="true" :items="chemicalList" placeholder="Chọn hóa chất" :columns="3" :object="true" />
 </template>
 <script>
-import api from '@/plugin/axios'
+import { axiosWrapper } from '@/plugin/axiosWrapper'
 
 
 export default {
@@ -19,12 +19,13 @@ export default {
     },
     methods: {
         async getAllChemical() {
-            api.get("chemical/list/master").then((res) => {
-                this.chemicalList = res.data;
-                console.log(this.chemicalList)
-            }).catch((e) => {
-                console.log(e)
-            })
+            this.chemicalList = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/chemical/list/master');
+            // api.get("chemical/list/master").then((res) => {
+            //     this.chemicalList = res.data;
+            //     console.log(this.chemicalList)
+            // }).catch((e) => {
+            //     console.log(e)
+            // })
         },
     },
     mounted() {

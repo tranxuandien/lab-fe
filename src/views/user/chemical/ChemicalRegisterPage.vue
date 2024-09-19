@@ -6,7 +6,7 @@
   </template>
 
 <script>
-import ChemicalRegisterForm from '../../components/chemical/ChemicalRegisterForm.vue'
+import ChemicalRegisterForm from '@/components/chemical/ChemicalRegisterForm.vue'
 
 export default {
   components: {

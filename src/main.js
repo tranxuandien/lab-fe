@@ -9,6 +9,7 @@ import 'bootstrap'
 import '@/assets/main.css'
 import Vue3Toastify from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import { createPinia } from 'pinia'
  
 
 
@@ -21,6 +22,7 @@ app.use(Vue3Toastify,
       autoClose: 3000,
       // ...
     })
+app.use(createPinia())
 app.config.productionTip = false
 // app.config.compilerOptions.isCustomElement = (tag) => ['person-details', 'Vueform'].cludes(tag);
 app.mount('#app');
