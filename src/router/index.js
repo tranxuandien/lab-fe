@@ -5,6 +5,8 @@ import accountRouter from './account'
 import userRouter from './user'
 import Login from '@/views/auth/Login.vue'
 import Layout from '@/views/auth/Layout.vue'
+import { useAuthStore } from '@/stores/auth';
+
 const Router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -42,5 +44,19 @@ const Router = createRouter({
       component: About
     }
   ]
+})
+// eslint-disable-next-line
+Router.beforeEach((to, from, next) => {
+  if (to.href.includes('/user')) {
+    const { isLogIn } = useAuthStore();
+    if (!isLogIn()) {
+      next({ name: "login" });
+    } else {
+      next()
+    }
+  }
+  else {
+    next()
+  }
 })
 export default Router;

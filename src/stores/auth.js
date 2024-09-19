@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia';
 
 import { axiosWrapper } from '@/plugin/axiosWrapper';
-import  Router  from '@/router/index';
+import Router from '@/router/index';
 import { useAlertStore } from '@/stores/alert';
-
-const baseUrl = process.env.VUE_APP_BASE_URL;
 
 export const useAuthStore = defineStore({
     id: 'auth',
@@ -16,11 +14,12 @@ export const useAuthStore = defineStore({
     actions: {
         async login(username, password) {
             try {
-                const user = await axiosWrapper.post(baseUrl+'api/auth/login', { username, password });    
+                const user = await axiosWrapper.post('api/auth/login', { username, password });
 
                 // update pinia state
                 this.user = user;
-
+                //
+                this.user.data.saveTime = Date.now();
                 // store user details and jwt in local storage to keep user logged in between page refreshes
                 localStorage.setItem('user', JSON.stringify(user));
 
@@ -35,6 +34,20 @@ export const useAuthStore = defineStore({
             this.user = null;
             localStorage.removeItem('user');
             Router.push('/auth/login');
+        },
+        hasRoleAdmin() {
+            return this.user && this.user.data.userDto.role == 'ROLE_ADMIN';
+        },
+        isLogIn() {
+            if(!this.user) return false; 
+            const compareDate = new Date(this.user.data.saveTime+this.user.data.timeAlive)
+            const currentDate = new Date(Date.now())
+            if(currentDate>compareDate)
+            {
+                this.logout()
+                return false;
+            }
+            return this.user && (this.user.data.token != '') && (this.user.data.token != null);
         }
     }
 });

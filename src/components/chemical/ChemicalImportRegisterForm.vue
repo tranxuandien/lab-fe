@@ -6,7 +6,7 @@
           <TextElement name="barcode" placeholder="Mã hóa chất" :columns="6" @change="getInfo">
           </TextElement>
         </GroupElement>
-        <ButtonElement :disabled="!chemical" name="submit" add-class="mt-2" @click="chemicalImport">
+        <ButtonElement :disabled="!chemical" name="submit" add-class="mt-2 btn-import" @click="chemicalImport">
           Đăng kí
         </ButtonElement>
       </Vueform>
@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-import api from '@/plugin/axios';
+import { axiosWrapper } from '@/plugin/axiosWrapper';
 import { toast } from 'vue3-toastify';
 
 export default {
@@ -64,13 +64,9 @@ export default {
   methods: {
     async getInfo(n) {
       if (n.length == 10)//check barcode length
-      //get chemical 
       {
         try {
-          api.get("chemical/register?barcode=" + n).then((res) => {
-            this.chemical = res.data;
-          })
-          // return conn;
+          this.chemical = await axiosWrapper.get("api/v1/admin/chemical/register?barcode=" + n);
         } catch (error) {
           console.error('There was a problem with the axios request:', error);
         }
@@ -79,31 +75,28 @@ export default {
     }
     ,
     async chemicalImport() {
-      try {
-        console.log(this.$refs.form$.data.barcode)
-        api.get("chemical/import?barcode=" + this.$refs.form$.data.barcode).then(res => {
-          console.log(res.data)
-          this.chemical = res.data.data;
-          this.$refs.form$.update({ // updates form data
-            barcode: '',
-          })
-          if (!res.data.errorMessage) {
-            toast.success("Đã nhập mã code hóa chất!", {
-              position: toast.POSITION.TOP_CENTER,
-            });
-          }
-          else {
-            toast.error(res.data.errorMessage, {
-              position: toast.POSITION.TOP_CENTER,
-            });
-          }
-        })
-      } catch (error) {
-        toast.error(error, {
-              position: toast.POSITION.TOP_CENTER,
-            });
+      const res = await axiosWrapper.get("api/v1/admin/chemical/import?barcode=" + this.$refs.form$.data.barcode);
+      this.chemical = res.data;
+      this.$refs.form$.update({ // updates form data
+        barcode: '',
+      })
+
+      if (!res.data.errorMessage) {
+        toast.success("Đã nhập mã code hóa chất!", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
+      else {
+        toast.error(res.data.errorMessage, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       }
     }
   }
 }
 </script>
+<style>
+.btn-import {
+  margin-bottom: 50px;
+}
+</style>

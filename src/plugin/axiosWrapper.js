@@ -14,18 +14,27 @@ const fetch = axios.create({
 });
 
 function request(method) {
-    return async (url, data) => {
+    return async (url, data, isDownloadFile) => {
+        url = process.env.VUE_APP_BASE_URL + url;
         const requestOptions = {
             method,
-            headers: authHeader(url)
+            headers: authHeader(url),
         };
+
 
         if (data) {
             requestOptions.headers['Content-Type'] = 'application/json';
             requestOptions.data = JSON.stringify(data);
         }
         console.log(requestOptions);
-        return await fetch(url, requestOptions).then(handleResponse).catch(handleResponseError);
+        if (isDownloadFile) {
+            requestOptions.responseType = 'blob'
+            return await fetch(url, requestOptions).then((res) => {
+                saveFile(res.data);
+            }).catch(handleResponseError);
+        } else {
+            return await fetch(url, requestOptions).then(handleResponse).catch(handleResponseError);
+        }
     }
 }
 
@@ -45,8 +54,8 @@ function authHeader(url) {
 }
 
 async function handleResponse(response) {
-    const isJson = response.headers?.get('content-type')?.includes('application/json');
-    const data = isJson ? response.data : null;
+    // const isJson = response.headers?.get('content-type')?.includes('application/json');
+    const data = response.data;
     if (data.message) {
         toast.success(data.message, {
             position: toast.POSITION.TOP_CENTER,
@@ -70,4 +79,17 @@ function handleResponseError(error) {
     // get error message from body or default to response status
     // const error = (data && data.message) || res.status;
     // return Promise.reject(error);
+}
+
+function saveFile(val) {
+    console.log(val);
+    const url = window.URL.createObjectURL(new Blob([val], { type: "application/pdf" }));
+    const tempLink = document.createElement('a');
+    tempLink.href = url;
+    tempLink.setAttribute('download',
+        `chemical_barcode.pdf`);
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+    window.URL.revokeObjectURL(url);
 }

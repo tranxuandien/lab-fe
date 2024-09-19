@@ -1,6 +1,6 @@
 <template>
         <SelectElement :search="true" label-prop="chemicalName" value-prop="id" name="chemical"
-            :native="true" :items="chemicalList" placeholder="Chọn hóa chất" :columns="3" :object="true" />
+            :native="true" :items="chemicalList" placeholder="Chọn hóa chất" :columns="{ container: 3, label: 4, wrapper: 12 }" :object="true" />
 </template>
 <script>
 import { axiosWrapper } from '@/plugin/axiosWrapper'
@@ -19,13 +19,7 @@ export default {
     },
     methods: {
         async getAllChemical() {
-            this.chemicalList = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/chemical/list/master');
-            // api.get("chemical/list/master").then((res) => {
-            //     this.chemicalList = res.data;
-            //     console.log(this.chemicalList)
-            // }).catch((e) => {
-            //     console.log(e)
-            // })
+            this.chemicalList = await axiosWrapper.get('api/v1/chemical/list/master');
         },
     },
     mounted() {

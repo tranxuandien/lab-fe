@@ -3,8 +3,8 @@
       <Header />
       <div class="container-fluid">
         <div class="row">
-          <SideNav class="col-md-3" />
-          <main class="col-md-9">
+          <SideNav class="col-md-2" />
+          <main class="col-md-10">
             <router-view></router-view>
           </main>
         </div>

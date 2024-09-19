@@ -104,11 +104,11 @@ export default {
     },
     methods: {
         async getAllBrand() {
-            this.brandList = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/brand');
+            this.brandList = await axiosWrapper.get('api/v1/brand');
         }
         ,
         async getAllPosition() {
-            this.positionLst = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/position');
+            this.positionLst = await axiosWrapper.get('api/v1/position');
         },
         async submitForm(form$) {
             const data = form$.data
@@ -117,7 +117,7 @@ export default {
                 data.chemicalClassInfo = data.chemicalClassInfo1;
             }
             try {
-                const check = await axiosWrapper.post(process.env.VUE_APP_BASE_URL + 'api/v1/chemical/add', data).finally(() => {
+                const check = await axiosWrapper.post('api/v1/chemical/add', data).finally(() => {
                     console.log("======")
                     form$.submitting = false;
                 });

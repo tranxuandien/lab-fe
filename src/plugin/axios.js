@@ -1,16 +1,5 @@
 import axios from 'axios'
 
-// const instance = axios.create({
-//     baseURL: 'http://localhost:8081/api/v1'
-// });
-
-// export default {
-//   install: function(Vue) {
-//     Object.defineProperty(Vue.prototype, '$axios', { value: instance });
-//   }
-// }
-
-
 const api = axios.create({
   // baseURL: process.env.VUE_APP_BASE_URL, // Thay đổi URL cơ sở của bạn
   timeout: 10000, // Thay đổi thời gian timeout nếu cần

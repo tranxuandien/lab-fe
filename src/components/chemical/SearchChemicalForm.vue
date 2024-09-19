@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div class ="col-md-12 form-search">
         <Vueform :endpoint="false" @submit="doSearch" name="searchChemicalForm">
-            <GroupElement name="group1">
+            <GroupElement name="group1" :columns="{ container: 12, label: 4, wrapper: 12 }">
                 <ChemicalSelectBox />
                 <SelectElement :search="true" label-prop="name" value-prop="id" name="brand" :native="true"
-                    :items="brandList" placeholder="Nơi sản xuất" :columns="3" />
+                    :items="brandList" placeholder="Nơi sản xuất" :columns="{ container: 3, label: 4, wrapper: 12 }" />
                 <SelectElement :search="true" name="chemicalType" :native="false" :items="['Dung dịch', 'Bột']"
-                    :columns="2" placeholder="Loại hóa chất" />
+                :columns="{ container: 3, label: 4, wrapper: 12 }" placeholder="Loại hóa chất" />
             </GroupElement>
             <GroupElement name="group2">
                 <SelectElement :search="true" name="chemicalClass" :native="false"
@@ -17,7 +17,7 @@
                 <SelectElement :search="true" name="impExpType" :native="false"
                     :items="['Hóa chất mới', 'Sắp hết', 'Hết']" :columns="2" placeholder="Trạng thái hóa chất" />
             </GroupElement>
-            <ButtonElement align="center" name="submit" add-class="mt-2" submits>
+            <ButtonElement name="submit" add-class="md-2 btn-search" submits>
                 Tìm kiếm
             </ButtonElement>
         </Vueform>
@@ -44,69 +44,27 @@ export default {
                 importUser: '',
                 chemicalProperty: '',
                 purchaseSrc: '',
-                // interested: [],
-                // terms: false
             },
             brandList: null,
             positionLst: null
         }
     },
-    watch: {
-
-    },
     methods: {
         async getAllBrand() {
-            this.brandList = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/brand');
-            // api.get("brand").then((res) => {
-            //     this.brandList = res.data;
-            // }).catch(e => {
-            //     console.log(e)
-            // })
+            this.brandList = await axiosWrapper.get('api/v1/brand');
         }
         ,
         async getAllPosition() {
-            this.positionLst = await axiosWrapper.get(process.env.VUE_APP_BASE_URL + 'api/v1/position');
-            // api.get("position").then((res) => {
-            //     this.positionLst = res.data;
-            // }).catch((e) => {
-            //     console.log(e)
-            // })
+            this.positionLst = await axiosWrapper.get('api/v1/position');
         },
         async doSearch(form$) {
-            const data = form$.data
-            // form$.submitting = true
-            // const url = form$.$vueform.services.axios.defaults.baseURL + 'chemical/list';
-            const result = await axiosWrapper.post(process.env.VUE_APP_BASE_URL + 'api/v1/chemical/list', data)
+            const data = form$.data;
+            form$.submitting = true;
+            const result = await axiosWrapper.post('api/v1/chemical/list', data).finally(()=>{
+                form$.submitting = false;
+            })
             this.$emit('getData', result.data);
         }
-        //     try {
-        //         // if (data.chemicalClass != 'Hóa chất vi sinh') {
-        //         //     data.chemicalClassInfo = data.chemicalClassInfo1;
-        //         // }
-        //         console.log(data)
-        //         response = await form$.$vueform.services.axios.post(url,
-        //             data /* | data | requestData */,
-        //             {
-        //                 cancelToken: form$.cancelToken.token,
-        //             }
-        //         ).then(res => {
-        //             console.log(res)
-        //             if (!res.data.errorMessage) {
-        //                 this.$emit('getData',res.data.data);
-        //             }
-        //             else {
-        //                 toast.error(res.data.errorMessage, {
-        //                     position: toast.POSITION.TOP_CENTER,
-        //                 });
-        //             }
-        //         })
-        //     } catch (error) {
-        //         console.log(error)
-        //     } finally {
-        //         form$.submitting = false
-        //     }
-        //     console.log('success', response)
-        // }
     },
     mounted() {
         this.getAllBrand()
@@ -114,3 +72,12 @@ export default {
     }
 } 
 </script>
+<style>
+.form-search{
+    padding-left: 10%;
+}
+.btn-search{
+    padding-left: 40%;
+    margin-bottom: 50px;
+}
+</style>
