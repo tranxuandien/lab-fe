@@ -33,6 +33,7 @@ export const useAuthStore = defineStore({
         logout() {
             this.user = null;
             localStorage.removeItem('user');
+            //TODO set expired
             Router.push('/auth/login');
         },
         hasRoleAdmin() {

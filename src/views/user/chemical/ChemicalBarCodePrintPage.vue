@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>
+        <div style="margin-bottom: 10px;">
             <h2><b> In tem hóa chất</b></h2>
         </div>
         <Vueform :endpoint="false" @submit="print">
